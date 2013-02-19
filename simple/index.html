@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Sample of websocket with golang</title>
+		<script src="jquery-1.8.3.min.js">
+		</script>
+	</head>
+	<body>
+			<input id="name" type="text" />
+			<button id="sendBtn">送信</a>
+
+		<script>
+			var ws = new WebSocket("ws://localhost:8080/echo");
+			ws.onmessage = function(e) {
+				console.log("受信メッセージ:" + event.data);
+			};
+
+			$('#sendBtn').click(function(){
+				var data = $('#name').val();
+				ws.send(data);
+				console.log("送信メッセージ:" + data);
+			});
+		</script>
+	</body>
+</html>

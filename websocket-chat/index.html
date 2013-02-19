@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Sample of websocket with golang</title>
+		<style>
+			@import url("lib/bootstrap/css/bootstrap.min.css");
+			@import url("lib/bootstrap/css/bootstrap-responsive.min.css");
+		</style>
+		<script src="lib/bootstrap/js/bootstrap.min.js">
+		</script>
+		<script src="lib/jquery-1.8.3.min.js">
+		</script>
+		<script src="lib/knockout-2.2.0.js">
+		</script>
+		<script src="lib/jquery-1.8.3.min.js">
+		</script>
+		<script src="lib/jquery.json-2.4.min.js">
+		</script>
+		<script data-main="js/main" src="lib/require.js">
+		</script>
+	</head>
+
+	<body>
+
+	<div class="grid-row">
+
+		<div class="span3">
+		</div>
+
+		<div class="span6">
+
+			<h1>Input</h1>
+			<form class="well form-horizontal" data-bind="with: editingMessage">
+
+				<!-- Author -->
+				<div class="control-group">
+					<label class="control-label" for="inputAuthor">Author :</label>
+					<div class="controls">
+						<input id="inputAuthor" type="text" data-bind="value: author"/>
+					</div>
+				</div>
+
+				<!-- Body -->
+				<div class="control-group">
+					<label class="control-label" for="inputBody">Message :</label>
+					<div class="controls">
+						<textarea id="inputBody" data-bind="value: body">
+						</textarea>
+					</div>
+				</div>
+
+				<div class="control-group">
+					<div class="controls">
+						<a href="#" class="btn pull-right" data-bind="click: $parent.send.bind($parent)">Send</a>
+					</div>
+				</div>
+			</form>
+
+			<h1>Messages</h1>
+			<div data-bind="foreach: messages">
+				<div>
+					<h3>
+						<!-- ko text: author -->
+						<!-- /ko -->
+						says :
+					</h3>
+					<pre data-bind="text:body">
+					</pre>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="span3">
+		</div>
+
+	</body>
+</html>
