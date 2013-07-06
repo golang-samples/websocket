@@ -102,10 +102,10 @@ func (s *Server) Listen() {
 		case c := <-s.addCh:
 			log.Println("Added new client")
 			s.clients = append(s.clients, c)
-			s.sendPastMessages(c)
 			log.Println("Now", len(s.clients), "clients connected.")
+			s.sendPastMessages(c)
 
-			// del a client
+		// del a client
 		case c := <-s.delCh:
 			log.Println("Delete client")
 			for i := range s.clients {
