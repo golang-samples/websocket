@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+	log.SetFlags(log.Lshortfile)
 
 	// websocket server
 	server := chat.NewServer("/entry")
