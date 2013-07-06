@@ -1,20 +1,21 @@
 package chat
 
 import (
-	"code.google.com/p/go.net/websocket"
+	"io"
 	"log"
+
+	"code.google.com/p/go.net/websocket"
 )
+
+const channelBufSize = 100
 
 // Chat client.
 type Client struct {
 	ws     *websocket.Conn
 	server *Server
 	ch     chan *Message
-	done   chan bool
+	doneCh chan bool
 }
-
-// write channel buffer size
-const channelBufSize = 1000
 
 // Create new chat client.
 func NewClient(ws *websocket.Conn, server *Server) *Client {
@@ -26,72 +27,74 @@ func NewClient(ws *websocket.Conn, server *Server) *Client {
 	}
 
 	ch := make(chan *Message, channelBufSize)
-	done := make(chan bool)
+	doneCh := make(chan bool)
 
-	return &Client{ws, server, ch, done}
+	return &Client{ws, server, ch, doneCh}
 }
 
 // Get websocket connection.
-func (self *Client) Conn() *websocket.Conn {
-	return self.ws
+func (c *Client) Conn() *websocket.Conn {
+	return c.ws
 }
 
 // Get Write channel
-func (self *Client) Write() chan<- *Message {
-	return (chan<- *Message)(self.ch)
+func (c *Client) Write() chan<- *Message {
+	return c.ch
 }
 
 // Get done channel.
-func (self *Client) Done() chan<- bool {
-	return (chan<- bool)(self.done)
+func (c *Client) DoneCh() chan<- bool {
+	return c.doneCh
 }
 
 // Listen Write and Read request via chanel
-func (self *Client) Listen() {
-	go self.listenWrite()
-	self.listenRead()
+func (c *Client) Listen() {
+	go c.listenWrite()
+	c.listenRead()
 }
 
 // Listen write request via chanel
-func (self *Client) listenWrite() {
+func (c *Client) listenWrite() {
 	log.Println("Listening write to client")
 	for {
 		select {
 
 		// send message to the client
-		case msg := <-self.ch:
+		case msg := <-c.ch:
 			log.Println("Send:", msg)
-			websocket.JSON.Send(self.ws, msg)
+			websocket.JSON.Send(c.ws, msg)
 
 		// receive done request
-		case <-self.done:
-			self.server.RemoveClient() <- self
-			self.done <- true // for listenRead method
+		case <-c.doneCh:
+			c.server.DelCh() <- c
+			c.doneCh <- true // for listenRead method
 			return
 		}
 	}
 }
 
 // Listen read request via chanel
-func (self *Client) listenRead() {
+func (c *Client) listenRead() {
 	log.Println("Listening read from client")
 	for {
 		select {
 
 		// receive done request
-		case <-self.done:
-			self.server.RemoveClient() <- self
-			self.done <- true // for listenWrite method
+		case <-c.doneCh:
+			c.server.DelCh() <- c
+			c.doneCh <- true // for listenWrite method
 			return
 
 		// read data from websocket connection
 		default:
 			var msg Message
-			err := websocket.JSON.Receive(self.ws, &msg)
-			if err != nil {
-				self.done <- true
+			err := websocket.JSON.Receive(c.ws, &msg)
+			if err == io.EOF {
+				c.doneCh <- true
+			} else if err != nil {
+				c.server.ErrCh() <- err
 			} else {
-				self.server.SendAll() <- &msg
+				c.server.SendAllCh() <- &msg
 			}
 		}
 	}
