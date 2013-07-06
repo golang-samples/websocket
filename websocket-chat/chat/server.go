@@ -2,18 +2,18 @@ package chat
 
 import (
 	"code.google.com/p/go.net/websocket"
-	"net/http"
 	"log"
+	"net/http"
 )
 
 // Chat server.
 type Server struct {
-	path string
-	clients []*Client
-	addClient chan *Client
+	path         string
+	clients      []*Client
+	addClient    chan *Client
 	removeClient chan *Client
-	sendAll chan *Message
-	messages []*Message
+	sendAll      chan *Message
+	messages     []*Message
 }
 
 // Create new chat server.
@@ -27,15 +27,15 @@ func NewServer(path string) *Server {
 }
 
 func (self *Server) AddClient() chan<- *Client {
-	return (chan<- *Client)(self.addClient)
+	return self.addClient
 }
 
 func (self *Server) RemoveClient() chan<- *Client {
-	return (chan<- *Client)(self.removeClient)
+	return self.removeClient
 }
 
-func (self *Server) SendAll() chan<-*Message {
-	return (chan<-*Message)(self.sendAll)
+func (self *Server) SendAll() chan<- *Message {
+	return self.sendAll
 }
 
 func (self *Server) Messages() []*Message {

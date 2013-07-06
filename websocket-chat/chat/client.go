@@ -7,10 +7,10 @@ import (
 
 // Chat client.
 type Client struct {
-	ws *websocket.Conn
+	ws     *websocket.Conn
 	server *Server
-	ch chan *Message
-	done chan bool
+	ch     chan *Message
+	done   chan bool
 }
 
 // write channel buffer size
@@ -37,13 +37,13 @@ func (self *Client) Conn() *websocket.Conn {
 }
 
 // Get Write channel
-func (self *Client) Write() chan<-*Message {
-	return (chan<-*Message)(self.ch)
+func (self *Client) Write() chan<- *Message {
+	return (chan<- *Message)(self.ch)
 }
 
 // Get done channel.
-func (self *Client) Done() chan<-bool {
-	return (chan<-bool)(self.done)
+func (self *Client) Done() chan<- bool {
+	return (chan<- bool)(self.done)
 }
 
 // Listen Write and Read request via chanel
@@ -89,7 +89,7 @@ func (self *Client) listenRead() {
 			var msg Message
 			err := websocket.JSON.Receive(self.ws, &msg)
 			if err != nil {
-				self.done<-true
+				self.done <- true
 			} else {
 				self.server.SendAll() <- &msg
 			}
