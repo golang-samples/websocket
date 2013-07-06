@@ -29,7 +29,16 @@ func NewServer(pattern string) *Server {
 	doneCh := make(chan bool)
 	errCh := make(chan error)
 
-	return &Server{pattern, messages, clients, addCh, delCh, sendAllCh, doneCh, errCh}
+	return &Server{
+		pattern,
+		messages,
+		clients,
+		addCh,
+		delCh,
+		sendAllCh,
+		doneCh,
+		errCh,
+	}
 }
 
 func (s *Server) Add(c *Client) {
