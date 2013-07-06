@@ -9,17 +9,17 @@ import (
 
 func echoHandler(ws *websocket.Conn) {
 	msg := make([]byte, 512)
-	_, err := ws.Read(msg)
+	n, err := ws.Read(msg)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Receive: %s\n", msg)
+	fmt.Printf("Receive: %s\n", msg[:n])
 
-	_, err = ws.Write(msg)
+	m, err := ws.Write(msg[:n])
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Send: %s\n", msg)
+	fmt.Printf("Send: %s\n", msg[:m])
 }
 
 func main() {
