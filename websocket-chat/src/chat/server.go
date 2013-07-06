@@ -32,35 +32,35 @@ func NewServer(pattern string) *Server {
 	return &Server{pattern, messages, clients, addCh, delCh, sendAllCh, doneCh, errCh}
 }
 
-func (s *Server) AddCh() chan<- *Client {
-	return s.addCh
+func (s *Server) Add(c *Client) {
+	s.addCh <- c
 }
 
-func (s *Server) DelCh() chan<- *Client {
-	return s.delCh
+func (s *Server) Del(c *Client) {
+	s.delCh <- c
 }
 
-func (s *Server) SendAllCh() chan<- *Message {
-	return s.sendAllCh
+func (s *Server) SendAll(msg *Message) {
+	s.sendAllCh <- msg
 }
 
-func (s *Server) DoneCh() chan<- bool {
-	return s.doneCh
+func (s *Server) Done() {
+	s.doneCh <- true
 }
 
-func (s *Server) ErrCh() chan<- error {
-	return s.errCh
+func (s *Server) Err(err error) {
+	s.errCh <- err
 }
 
 func (s *Server) sendPastMessages(c *Client) {
 	for _, msg := range s.messages {
-		c.Write() <- msg
+		c.Write(msg)
 	}
 }
 
 func (s *Server) sendAll(msg *Message) {
 	for _, c := range s.clients {
-		c.Write() <- msg
+		c.Write(msg)
 	}
 }
 
@@ -72,7 +72,12 @@ func (s *Server) Listen() {
 
 	// websocket handler
 	onConnected := func(ws *websocket.Conn) {
-		defer ws.Close()
+		defer func() {
+			err := ws.Close()
+			if err != nil {
+				s.errCh <- err
+			}
+		}()
 
 		client := NewClient(ws, s)
 		s.addCh <- client

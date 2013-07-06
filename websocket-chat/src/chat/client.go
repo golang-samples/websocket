@@ -22,7 +22,9 @@ func NewClient(ws *websocket.Conn, server *Server) *Client {
 
 	if ws == nil {
 		panic("ws cannot be nil")
-	} else if server == nil {
+	}
+
+	if server == nil {
 		panic("server cannot be nil")
 	}
 
@@ -38,13 +40,13 @@ func (c *Client) Conn() *websocket.Conn {
 }
 
 // Get Write channel
-func (c *Client) Write() chan<- *Message {
-	return c.ch
+func (c *Client) Write(msg *Message) {
+	c.ch <- msg
 }
 
 // Get done channel.
-func (c *Client) DoneCh() chan<- bool {
-	return c.doneCh
+func (c *Client) Done() {
+	c.doneCh <- true
 }
 
 // Listen Write and Read request via chanel
@@ -66,7 +68,7 @@ func (c *Client) listenWrite() {
 
 		// receive done request
 		case <-c.doneCh:
-			c.server.DelCh() <- c
+			c.server.Del(c)
 			c.doneCh <- true // for listenRead method
 			return
 		}
@@ -81,7 +83,7 @@ func (c *Client) listenRead() {
 
 		// receive done request
 		case <-c.doneCh:
-			c.server.DelCh() <- c
+			c.server.Del(c)
 			c.doneCh <- true // for listenWrite method
 			return
 
@@ -92,9 +94,9 @@ func (c *Client) listenRead() {
 			if err == io.EOF {
 				c.doneCh <- true
 			} else if err != nil {
-				c.server.ErrCh() <- err
+				c.server.Err(err)
 			} else {
-				c.server.SendAllCh() <- &msg
+				c.server.SendAll(&msg)
 			}
 		}
 	}
