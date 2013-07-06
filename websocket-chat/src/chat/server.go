@@ -80,7 +80,7 @@ func (s *Server) Listen() {
 		}()
 
 		client := NewClient(ws, s)
-		s.addCh <- client
+		s.Add(client)
 		client.Listen()
 	}
 	http.Handle(s.pattern, websocket.Handler(onConnected))
