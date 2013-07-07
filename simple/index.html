@@ -7,16 +7,17 @@
 		<script>
       $(function() {
         var ws = new WebSocket("ws://localhost:3000/echo");
+        var $ul = $('#msg-list');
+
         ws.onmessage = function(e) {
-          console.log("受信メッセージ:" + event.data);
+          console.log("受信メッセージ:" + e.data);
+          $('<li>').text(e.data).appendTo($ul);
         };
 
-        var $ul = $('#msg-list');
         $('#sendBtn').click(function(){
           var data = $('#name').val();
           ws.send(data);
           console.log("送信メッセージ:" + data);
-          $('<li>').text(data).appendTo($ul);
         });
       });
 		</script>
