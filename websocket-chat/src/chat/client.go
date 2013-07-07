@@ -34,17 +34,14 @@ func NewClient(ws *websocket.Conn, server *Server) *Client {
 	return &Client{ws, server, ch, doneCh}
 }
 
-// Get websocket connection.
 func (c *Client) Conn() *websocket.Conn {
 	return c.ws
 }
 
-// Get Write channel
 func (c *Client) Write(msg *Message) {
 	c.ch <- msg
 }
 
-// Get done channel.
 func (c *Client) Done() {
 	c.doneCh <- true
 }
