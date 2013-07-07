@@ -35,17 +35,45 @@ func NewClient(ws *websocket.Conn) *Client {
 	return client
 }
 
+type Clients struct {
+	clients []*Client
+}
+
+func (c *Clients) Add(client *Client) {
+	c.clients = append(c.clients, client)
+}
+
+func (c *Clients) Broadcast(data string) {
+	for _, c := range c.clients {
+		log.Println(c)
+		c.Write(data)
+	}
+}
+
+func NewClients() *Clients {
+	return &Clients{
+		clients: []*Client{},
+	}
+}
+
+var clients = NewClients()
+
 func echoHandler(ws *websocket.Conn) {
 	client := NewClient(ws)
+	clients.Add(client)
+	log.Println(len(clients.clients))
 
-	message := client.Read()
-	fmt.Printf("Receive: %s\n", message)
+	for {
+		message := client.Read()
+		fmt.Printf("Receive: %s\n", message)
 
-	client.Write(message)
-	fmt.Printf("Send: %s\n", message)
+		clients.Broadcast(message)
+		fmt.Printf("Send: %s\n", message)
+	}
 }
 
 func main() {
+	log.SetFlags(log.Lshortfile)
 	http.Handle("/echo", websocket.Handler(echoHandler))
 	http.Handle("/", http.FileServer(http.Dir(".")))
 	err := http.ListenAndServe(":3000", nil)
