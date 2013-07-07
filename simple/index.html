@@ -3,24 +3,27 @@
 	<head>
 		<meta charset="UTF-8" />
 		<title>Sample of websocket with golang</title>
-		<script src="jquery-1.8.3.min.js">
+		<script src="jquery-1.8.3.min.js"></script>
+		<script>
+      $(function() {
+        var ws = new WebSocket("ws://localhost:8080/echo");
+        ws.onmessage = function(e) {
+          console.log("受信メッセージ:" + event.data);
+        };
+
+        var $ul = $('#msg-list');
+        $('#sendBtn').click(function(){
+          var data = $('#name').val();
+          ws.send(data);
+          console.log("送信メッセージ:" + data);
+          $('<li>').text(data).appendTo($ul);
+        });
+      });
 		</script>
 	</head>
 	<body>
 			<input id="name" type="text" />
-			<button id="sendBtn">送信</a>
-
-		<script>
-			var ws = new WebSocket("ws://localhost:8080/echo");
-			ws.onmessage = function(e) {
-				console.log("受信メッセージ:" + event.data);
-			};
-
-			$('#sendBtn').click(function(){
-				var data = $('#name').val();
-				ws.send(data);
-				console.log("送信メッセージ:" + data);
-			});
-		</script>
+			<input type="button" id="sendBtn" value="send"></input>
+      <ul id="msg-list"></ul>
 	</body>
 </html>
