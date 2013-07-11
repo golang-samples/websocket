@@ -31,7 +31,7 @@ func NewClient(ws *websocket.Conn, server *Server) *Client {
 		panic("server cannot be nil")
 	}
 
-    maxId++
+	maxId++
 	ch := make(chan *Message, channelBufSize)
 	doneCh := make(chan bool)
 

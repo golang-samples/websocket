@@ -101,14 +101,14 @@ func (s *Server) Listen() {
 		// Add new a client
 		case c := <-s.addCh:
 			log.Println("Added new client")
-            s.clients[c.id] = c
+			s.clients[c.id] = c
 			log.Println("Now", len(s.clients), "clients connected.")
 			s.sendPastMessages(c)
 
 		// del a client
 		case c := <-s.delCh:
 			log.Println("Delete client")
-            delete(s.clients, c.id)
+			delete(s.clients, c.id)
 
 		// broadcast message for all clients
 		case msg := <-s.sendAllCh:
