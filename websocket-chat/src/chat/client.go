@@ -1,6 +1,7 @@
 package chat
 
 import (
+	"fmt"
 	"io"
 	"log"
 
@@ -43,7 +44,13 @@ func (c *Client) Conn() *websocket.Conn {
 }
 
 func (c *Client) Write(msg *Message) {
-	c.ch <- msg
+	select {
+	case c.ch <- msg:
+	default:
+		c.server.Del(c)
+		err := fmt.Errorf("client %d is disconnected.", c.id)
+		c.server.Err(err)
+	}
 }
 
 func (c *Client) Done() {
