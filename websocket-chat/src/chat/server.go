@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"code.google.com/p/go.net/websocket"
+	"golang.org/x/net/websocket"
 )
 
 // Chat server.
