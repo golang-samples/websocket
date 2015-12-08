@@ -1,9 +1,10 @@
 package main
 
 import (
-	"code.google.com/p/go.net/websocket"
 	"io"
 	"net/http"
+
+	"golang.org/x/net/websocket"
 )
 
 func echoHandler(ws *websocket.Conn) {
