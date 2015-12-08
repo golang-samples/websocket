@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"chat"
+	"./chat"
 )
 
 func main() {
