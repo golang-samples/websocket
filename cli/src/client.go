@@ -1,9 +1,10 @@
 package main
 
 import (
-	"code.google.com/p/go.net/websocket"
 	"fmt"
 	"log"
+
+	"golang.org/x/net/websocket"
 )
 
 var origin = "http://localhost/"
