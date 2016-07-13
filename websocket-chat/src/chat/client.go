@@ -57,13 +57,13 @@ func (c *Client) Done() {
 	c.doneCh <- true
 }
 
-// Listen Write and Read request via chanel
+// Listen Write and Read request via channel
 func (c *Client) Listen() {
 	go c.listenWrite()
 	c.listenRead()
 }
 
-// Listen write request via chanel
+// Listen write request via channel
 func (c *Client) listenWrite() {
 	log.Println("Listening write to client")
 	for {
@@ -83,7 +83,7 @@ func (c *Client) listenWrite() {
 	}
 }
 
-// Listen read request via chanel
+// Listen read request via channel
 func (c *Client) listenRead() {
 	log.Println("Listening read from client")
 	for {
