@@ -4,7 +4,7 @@ define(
 		"MessageList"
 	],
 	function(MessageList) {
-		var ws = new WebSocket("ws://localhost:8080/entry");
+		var ws = new WebSocket("ws" + (window.location.protocol==="https:"?"s":"") + "://"+ window.location.hostname + (window.location.port?":"+window.location.port:"") + "/entry");
 		var list = new MessageList(ws);
 		ko.applyBindings(list);
 	}
