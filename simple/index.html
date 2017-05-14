@@ -8,7 +8,7 @@
       $(function() {
         var ws = new WebSocket("ws://localhost:8080/echo");
         ws.onmessage = function(e) {
-          console.log("受信メッセージ:" + event.data);
+          console.log("受信メッセージ:" + e.data);
         };
 
         var $ul = $('#msg-list');
